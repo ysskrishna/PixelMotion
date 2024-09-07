@@ -11,7 +11,8 @@ services:
       - redis
     links:
       - redis
-      # TODO: Link volume to images directory
+    volumes:
+      - ./backend/images:/app/images
   
   worker:
     build:

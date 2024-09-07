@@ -1,5 +1,5 @@
-# Image to Video Generation Pipeline
-A full stack application which allows users to demonstrate a image to video generation pipeline using distributed systems
+# PixelMotion - Image to video generation tool
+A full stack application which allows users to video generation from images using distributed systems
 
 ## Techstack used: 
 - React

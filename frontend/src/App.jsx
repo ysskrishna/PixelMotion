@@ -4,6 +4,7 @@ import axios from 'axios';
 import useWebSocket from 'react-use-websocket';
 import Table from './components/Table';
 import Upload from './components/Upload';
+import Logo from './assets/logo.png';
 
 
 const App = () => {
@@ -74,9 +75,9 @@ const App = () => {
   return (
     <div className="max-w-6xl mx-auto p-6 my-2">
       <section class="bg-white dark:bg-gray-900">
-        <div class="px-4 mx-auto max-w-screen-xl text-center">
-            <h1 class="mb-4 text-3xl font-extrabold tracking-tight leading-none text-gray-900 md:text-4xl lg:text-5xl">Image to Video Generator</h1>
-            <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks. Start creating your video now and share your story with the world.</p>
+        <div class="px-4 mx-auto max-w-screen-xl text-center justify-center items-center">
+          <img src={Logo} alt="PixelMotion" className="h-10 md:h-12  mx-auto" />  
+          <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks. Start creating your video now and share your story with the world.</p>
         </div>
       </section>
 
