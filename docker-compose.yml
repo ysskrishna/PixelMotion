@@ -2,6 +2,19 @@ version: '3'
 
 
 services:
+  storage:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"  # S3 API port
+      - "9001:9001"  # Web UI
+    volumes:
+      - ./backend/storage:/data  # Persistent shared storage
+    environment:
+      MINIO_ROOT_USER: minioadmin  # Default username
+      MINIO_ROOT_PASSWORD: minioadmin  # Default password
+    command: server /data --console-address ":9001"
+
   backend:
     build:
       context: ./backend
@@ -13,8 +26,7 @@ services:
       - redis
     links:
       - redis
-    volumes:
-      - ./backend/images:/app/images
+      - storage
   
   worker:
     build:
@@ -27,6 +39,7 @@ services:
       - redis
     links:
       - redis
+      - storage
 
   # frontend:
   #   build:
