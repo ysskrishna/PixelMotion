@@ -43,7 +43,7 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
         raise HTTPException(status_code=400, detail="Invalid file type")
 
     # Upload file to S3
-    file_url = s3_client.upload_file(file.file, filename, file.content_type)
+    file_url = s3_client.upload_file(file.file, f"images/{filename}", file.content_type)
     print(f"file_url: {file_url}, title: {title}, content_type: {file.content_type}")
 
 
