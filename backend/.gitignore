@@ -28,5 +28,4 @@ archive.zip
 
 # macOS
 .DS_Store
-api/images/*
-api/videos/*
+storage/*

@@ -27,6 +27,3 @@ coverage/
 build/
 dist/
 *.egg-info/
-
-images/*
-videos/*
