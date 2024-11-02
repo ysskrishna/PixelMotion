@@ -17,13 +17,12 @@ class S3Client:
         if not self._initialized:
             self.s3_client = boto3.client(
                 's3',
-                endpoint_url=Config.MINIO_ENDPOINT,
-                aws_access_key_id=Config.MINIO_ACCESS_KEY,
-                aws_secret_access_key=Config.MINIO_SECRET_KEY,
-                region_name=Config.MINIO_REGION,
-                config=boto3.Config(signature_version='s3v4')
+                endpoint_url=Config.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
+                region_name=Config.AWS_REGION
             )
-            self.bucket_name = Config.MINIO_BUCKET_NAME
+            self.bucket_name = Config.AWS_S3_BUCKET_NAME
             self._ensure_bucket_exists()
             self._initialized = True
 
