@@ -31,10 +31,11 @@ async def serve_index():
     return """
     <html>
     <head>
-        <title>Image to Video Generator</title>
+        <title>PixelMotion</title>
     </head>
     <body>
-        <h1>Image to Video Generator API</h1>
+        <h1>PixelMotion</h1>
+        <p>Image to Video Generator API</p>
     </body>
     </html>
     """
