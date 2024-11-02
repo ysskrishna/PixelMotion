@@ -1,12 +1,10 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 import asyncio
 import threading
 
 from app.routers.user import router as user_router
-from app.core.config import Config
 from app.core.common import connected_websockets
 from app.listeners.task_updates import task_updates_listener
 
@@ -22,7 +20,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/images", StaticFiles(directory= Config.UPLOAD_DIR), name="images")
 app.include_router(user_router, prefix="/user", tags=["user"])
 
 

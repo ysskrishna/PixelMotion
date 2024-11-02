@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, Form, UploadFile
+from fastapi import APIRouter,  HTTPException, File, Form, UploadFile
 
 import uuid
 import os
@@ -8,9 +8,12 @@ from app.core.common import jobs_queue, redis_conn
 from app.core.config import Config
 from app.models.enums import JobStatus
 from app.models.schemas import TaskStatus
-from ai_engine.utils import process_image, create_task_status
+from app.core.s3 import S3Client
+
 
 router = APIRouter()
+
+s3_client = S3Client()
 
 
 @router.get("/tasks", response_model=list[TaskStatus])
@@ -26,27 +29,27 @@ async def get_all_tasks():
     return tasks
 
 
-def save_uploaded_file(file: UploadFile, filename: str):
-    # Ensure directory exists
-    os.makedirs(Config.UPLOAD_DIR, exist_ok=True)
-    file_path = os.path.join(Config.UPLOAD_DIR, filename)
-    with open(file_path, "wb") as buffer:
-        buffer.write(file.file.read())
-    return file_path
 
 @router.post("/upload")
-async def upload_image(file: UploadFile = File(...), title: str = Form(...)):
+def upload_image(file: UploadFile = File(...), title: str = Form(...)):
     # Generate unique filename
     current_datetime = datetime.now()
     formatted_timestamp = current_datetime.strftime('%y%m%d%H%M%S')
     filename = f"{formatted_timestamp}_{file.filename}"
-
-    file_path = save_uploaded_file(file, filename)
-
     task_id = str(uuid.uuid4())
-    create_task_status(task_id, JobStatus.pending.value, title, image_url=file_path)
-    
-    # Add background task to jobs_queue
-    jobs_queue.enqueue(process_image, task_id, file_path)
 
-    return {"task_id": task_id, "filename": filename}
+    
+    if file.content_type not in ['image/jpeg', 'image/png', 'image/jpg']:
+        raise HTTPException(status_code=400, detail="Invalid file type")
+
+    # Upload file to S3
+    file_url = s3_client.upload_file(file.file, filename, file.content_type)
+    print(f"file_url: {file_url}, title: {title}, content_type: {file.content_type}")
+
+
+    # create_task_status(task_id, JobStatus.pending.value, title, image_url=file_path)
+    
+    # # Add background task to jobs_queue
+    # jobs_queue.enqueue(process_image, task_id, file_path)
+
+    return {"task_id": task_id, "filename": filename, "file_url": file_url}
