@@ -1,8 +1,7 @@
 from typing import Optional, BinaryIO
 import boto3
 from botocore.exceptions import ClientError
-from fastapi import HTTPException
-from app.core.config import Config
+from pm_common.core.config import BaseConfig
 
 class S3Client:
     _instance = None
@@ -11,18 +10,22 @@ class S3Client:
         if cls._instance is None:
             cls._instance = super().__new__(cls)
             cls._instance._initialized = False
+            cls._config = BaseConfig()
         return cls._instance
 
     def __init__(self):
         if not self._initialized:
+            # Validate s3 config variables
+            self._config.validate_s3_config()
+
             self.s3_client = boto3.client(
                 's3',
-                endpoint_url=Config.AWS_S3_ENDPOINT_URL,
-                aws_access_key_id=Config.AWS_ACCESS_KEY_ID,
-                aws_secret_access_key=Config.AWS_SECRET_ACCESS_KEY,
-                region_name=Config.AWS_REGION
+                endpoint_url=self._config.AWS_S3_ENDPOINT_URL,
+                aws_access_key_id=self._config.AWS_ACCESS_KEY_ID,
+                aws_secret_access_key=self._config.AWS_SECRET_ACCESS_KEY,
+                region_name=self._config.AWS_REGION
             )
-            self.bucket_name = Config.AWS_S3_BUCKET_NAME
+            self.bucket_name = self._config.AWS_S3_BUCKET_NAME
             self._ensure_bucket_exists()
             self._initialized = True
 
@@ -44,20 +47,17 @@ class S3Client:
         Returns:
             str: URL of the uploaded file
         """
-        try:
-            extra_args = {'ContentType': content_type} if content_type else {}
-            self.s3_client.upload_fileobj(
-                file_obj,
-                self.bucket_name,
-                object_name,
-                ExtraArgs=extra_args
-            )
-            
-            # Generate URL for the uploaded file
-            url = self.get_file_url(object_name)
-            return url
-        except ClientError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to upload file: {str(e)}")
+        extra_args = {'ContentType': content_type} if content_type else {}
+        self.s3_client.upload_fileobj(
+            file_obj,
+            self.bucket_name,
+            object_name,
+            ExtraArgs=extra_args
+        )
+        
+        # Generate URL for the uploaded file
+        url = self.get_file_url(object_name)
+        return url
 
     def get_file_url(self, object_name: str, expires_in: int = 3600) -> str:
         """
@@ -70,18 +70,15 @@ class S3Client:
         Returns:
             str: Presigned URL for the file
         """
-        try:
-            url = self.s3_client.generate_presigned_url(
-                'get_object',
-                Params={
-                    'Bucket': self.bucket_name,
-                    'Key': object_name
-                },
-                ExpiresIn=expires_in
-            )
-            return url
-        except ClientError as e:
-            raise HTTPException(status_code=404, detail=f"File not found: {str(e)}")
+        url = self.s3_client.generate_presigned_url(
+            'get_object',
+            Params={
+                'Bucket': self.bucket_name,
+                'Key': object_name
+            },
+            ExpiresIn=expires_in
+        )
+        return url
 
     def delete_file(self, object_name: str) -> bool:
         """
@@ -93,14 +90,11 @@ class S3Client:
         Returns:
             bool: True if deletion was successful
         """
-        try:
-            self.s3_client.delete_object(
-                Bucket=self.bucket_name,
-                Key=object_name
-            )
-            return True
-        except ClientError as e:
-            raise HTTPException(status_code=500, detail=f"Failed to delete file: {str(e)}")
+        self.s3_client.delete_object(
+            Bucket=self.bucket_name,
+            Key=object_name
+        )
+        return True
 
     def check_file_exists(self, object_name: str) -> bool:
         """

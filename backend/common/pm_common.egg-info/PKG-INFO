@@ -1,0 +1,13 @@
+Metadata-Version: 2.2
+Name: pm_common
+Version: 0.1.0
+Summary: Common utilities for Pixelmotion
+Author: ysskrishna
+Requires-Python: >=3.10
+Requires-Dist: redis
+Requires-Dist: boto3
+Requires-Dist: rq
+Dynamic: author
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary
