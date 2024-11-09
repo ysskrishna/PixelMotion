@@ -26,6 +26,8 @@ class S3Client:
                 region_name=self._config.AWS_REGION
             )
             self.bucket_name = self._config.AWS_S3_BUCKET_NAME
+            self.endpoint_url = self._config.AWS_S3_ENDPOINT_URL
+            self.public_endpoint_url = self._config.AWS_S3_PUBLIC_ENDPOINT_URL
             self._ensure_bucket_exists()
             self._initialized = True
 
@@ -78,6 +80,7 @@ class S3Client:
             },
             ExpiresIn=expires_in
         )
+        url = url.replace(self.endpoint_url, self.public_endpoint_url)
         return url
 
     def delete_file(self, object_name: str) -> bool:

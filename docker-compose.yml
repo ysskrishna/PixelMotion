@@ -21,13 +21,15 @@ services:
 
   backend:
     build:
-      context: ./backend/api
+      context: ./backend 
+      dockerfile: api/Dockerfile
     env_file:
-      - ./backend/api/.env
+      - ./backend/api/.env.production
     ports:
       - "8000:8000"
     depends_on:
       - redis
+      - storage
     links:
       - redis
       - storage

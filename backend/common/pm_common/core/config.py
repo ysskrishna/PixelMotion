@@ -8,6 +8,7 @@ class BaseConfig:
         'AWS_SECRET_ACCESS_KEY',
         'AWS_S3_BUCKET_NAME',
         'AWS_S3_ENDPOINT_URL',
+        'AWS_S3_PUBLIC_ENDPOINT_URL',
         'AWS_REGION'
     }
     
