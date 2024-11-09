@@ -4,8 +4,9 @@ from pm_common.core.config import BaseConfig
 
 class RedisConnection:
     _instance = None
-    _jobs_queue = None
     _redis_conn = None
+    _jobs_queue_conn = None
+    _jobs_queue = None
     _config = BaseConfig()
 
     @classmethod
@@ -20,12 +21,12 @@ class RedisConnection:
                 port=cls._config.REDIS_PORT, 
                 db=1
             )
-            jobs_queue_conn = Redis(
+            cls._jobs_queue_conn = Redis(
                 host=cls._config.REDIS_HOST, 
                 port=cls._config.REDIS_PORT, 
                 db=0
             )
-            cls._jobs_queue = Queue(connection=jobs_queue_conn)
+            cls._jobs_queue = Queue(connection=cls._jobs_queue_conn)
         return cls._instance
 
     @classmethod
@@ -33,6 +34,12 @@ class RedisConnection:
         if cls._redis_conn is None:
             cls.initialize()
         return cls._redis_conn
+
+    @classmethod
+    def get_jobs_queue_conn(cls) -> Redis:
+        if cls._jobs_queue_conn is None:
+            cls.initialize()
+        return cls._jobs_queue_conn
 
     @classmethod
     def get_jobs_queue(cls) -> Queue:
