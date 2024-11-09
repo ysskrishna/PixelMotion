@@ -40,13 +40,13 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
     if file.content_type not in ['image/jpeg', 'image/png', 'image/jpg']:
         raise HTTPException(status_code=400, detail="Invalid file type")
 
-    # Upload file to S3
-    file_url = s3_client.upload_file(file.file, f"{config.IMAGES_FOLDER}/{filename}", file.content_type)
-    print(f"file_url: {file_url}, title: {title}, content_type: {file.content_type}")
+    filepath = s3_client.upload_file(file.file, f"{config.IMAGES_FOLDER}/{filename}", file.content_type)
+    print(f"filepath: {filepath}, title: {title}, content_type: {file.content_type}")
+
 
     # create_task_status(task_id, JobStatus.pending.value, title, image_url=file_path)
     
     # # Add background task to jobs_queue
     # jobs_queue.enqueue(process_image, task_id, file_path)
 
-    return {"task_id": task_id, "filename": filename, "file_url": file_url}
+    return {"task_id": task_id, "filename": filename, "filepath": filepath}

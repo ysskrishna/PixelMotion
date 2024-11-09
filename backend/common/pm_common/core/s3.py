@@ -57,9 +57,7 @@ class S3Client:
             ExtraArgs=extra_args
         )
         
-        # Generate URL for the uploaded file
-        url = self.get_file_url(object_name)
-        return url
+        return object_name
 
     def get_file_url(self, object_name: str, expires_in: int = 3600) -> str:
         """
