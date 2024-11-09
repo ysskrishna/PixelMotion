@@ -1,3 +1,20 @@
+# PixelMotion Backend
+
+## API Server 
+
+### Running locally
+```
+cd api
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+```
+python main.py
+```
+
+### Common Package
 
 Install common package in api
 ```
