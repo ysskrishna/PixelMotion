@@ -6,6 +6,8 @@ from datetime import datetime
 from app.models.schemas import TaskStatus
 from pm_common.core.s3 import S3Client
 from pm_common.core.redis_utils import RedisConnection
+from pm_common.core.task_status import create_task_status
+from pm_common.models.enums import JobStatus
 from app.core.config import config
 
 router = APIRouter()
@@ -42,11 +44,9 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
 
     filepath = s3_client.upload_file(file.file, f"{config.IMAGES_FOLDER}/{filename}", file.content_type)
     print(f"filepath: {filepath}, title: {title}, content_type: {file.content_type}")
-
-
-    # create_task_status(task_id, JobStatus.pending.value, title, image_url=file_path)
+    create_task_status(task_id, JobStatus.pending.value, title, image_url=filepath)
     
     # # Add background task to jobs_queue
     # jobs_queue.enqueue(process_image, task_id, file_path)
 
-    return {"task_id": task_id, "filename": filename, "filepath": filepath}
+    return {"task_id": task_id, "filename": filename}
