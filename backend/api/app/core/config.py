@@ -1,15 +1,14 @@
-import os
 from dotenv import load_dotenv
+from pm_common.core.config import BaseConfig
+import os
+
 
 load_dotenv()
 
-class Config(object):
-    REDIS_HOST = os.getenv('REDIS_HOST')
-    REDIS_PORT = int(os.getenv('REDIS_PORT'))
+class Config(BaseConfig):
+    IMAGES_FOLDER = os.getenv('IMAGES_FOLDER')
+    VIDEOS_FOLDER = os.getenv('VIDEOS_FOLDER')
 
-    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
-    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-    AWS_REGION = os.getenv('AWS_REGION')
-    AWS_S3_BUCKET_NAME = os.getenv('AWS_S3_BUCKET_NAME')
-    AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+config = Config()
+  
 

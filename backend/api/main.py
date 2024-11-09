@@ -4,8 +4,11 @@ from fastapi.responses import HTMLResponse
 import asyncio
 import threading
 
+# Load config from .env file
+from app.core.config import config
+
 from app.routers.user import router as user_router
-from app.core.common import connected_websockets
+from app.core.utils import connected_websockets
 from app.listeners.task_updates import task_updates_listener
 
 # Create FastAPI instance

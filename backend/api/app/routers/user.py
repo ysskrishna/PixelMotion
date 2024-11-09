@@ -1,19 +1,17 @@
 from fastapi import APIRouter,  HTTPException, File, Form, UploadFile
 
 import uuid
-import os
 import json
 from datetime import datetime
-from app.core.common import jobs_queue, redis_conn
-from app.core.config import Config
-from app.models.enums import JobStatus
 from app.models.schemas import TaskStatus
-from app.core.s3 import S3Client
-
+from pm_common.core.s3 import S3Client
+from pm_common.core.redis_utils import RedisConnection
+from app.core.config import config
 
 router = APIRouter()
 
 s3_client = S3Client()
+redis_conn = RedisConnection.get_redis_connection()
 
 
 @router.get("/tasks", response_model=list[TaskStatus])
@@ -43,9 +41,8 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
         raise HTTPException(status_code=400, detail="Invalid file type")
 
     # Upload file to S3
-    file_url = s3_client.upload_file(file.file, f"images/{filename}", file.content_type)
+    file_url = s3_client.upload_file(file.file, f"{config.IMAGES_FOLDER}/{filename}", file.content_type)
     print(f"file_url: {file_url}, title: {title}, content_type: {file.content_type}")
-
 
     # create_task_status(task_id, JobStatus.pending.value, title, image_url=file_path)
     
