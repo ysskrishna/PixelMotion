@@ -1,7 +1,11 @@
 import json
 import asyncio
-from app.core.common import redis_conn, connected_websockets 
-from app.models.enums import OperationType
+from pm_common.core.redis_utils import RedisConnection
+from pm_common.models.enums import OperationType
+from app.core.utils import connected_websockets
+
+
+redis_conn = RedisConnection.get_redis_connection()
 
 def task_updates_listener():
     pubsub = redis_conn.pubsub()
