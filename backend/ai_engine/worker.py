@@ -1,6 +1,7 @@
 from src.core.config import config
 from rq import Worker, Queue, Connection
 from pm_common.core.redis_utils import RedisConnection
+import tasks # Import to register tasks
 
 jobs_queue_conn = RedisConnection.get_jobs_queue_conn()
 listen = ['default']

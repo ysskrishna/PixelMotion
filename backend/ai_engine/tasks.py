@@ -1,6 +1,6 @@
 import time
 from pm_common.models.enums import JobStatus
-from pm_common.core.task_utils import update_task_status
+from pm_common.core.task_status import update_task_status
 
 
 def process_image(task_id: str, file_path: str):

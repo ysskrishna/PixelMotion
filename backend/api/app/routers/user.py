@@ -51,7 +51,7 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
         
         # Add background task to jobs_queue
         jobs_queue.enqueue(
-            'ai_engine.tasks.process_image', 
+            'tasks.process_image', 
             task_id, 
             filepath,
             retry=Retry(max=3, interval=[300, 600, 1200]),  # Retry 3 times with increasing delays

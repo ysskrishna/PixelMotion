@@ -34,18 +34,18 @@ services:
       - redis
       - storage
   
-  # worker:
-  #   build:
-  #     context: ./backend
-  #   env_file:
-  #     - ./backend/.env.production
-  #   command: ["python", "ai_engine/worker.py"]
-  #   depends_on:
-  #     - backend
-  #     - redis
-  #   links:
-  #     - redis
-  #     - storage
+  worker:
+    build:
+      context: ./backend
+      dockerfile: ai_engine/Dockerfile
+    env_file:
+      - ./backend/ai_engine/.env.production
+    depends_on:
+      - backend
+      - redis
+    links:
+      - redis
+      - storage
 
   # frontend:
   #   build:
