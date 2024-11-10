@@ -10,5 +10,6 @@ pm_common/core/__init__.py
 pm_common/core/config.py
 pm_common/core/redis_utils.py
 pm_common/core/s3.py
+pm_common/core/task_status.py
 pm_common/models/__init__.py
 pm_common/models/enums.py

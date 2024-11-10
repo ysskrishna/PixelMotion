@@ -49,7 +49,7 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
         print(f"filepath: {filepath}, title: {title}, content_type: {file.content_type}")
         create_task_status(task_id, JobStatus.pending.value, title, image_url=filepath)
         
-        # # Add background task to jobs_queue
+        # Add background task to jobs_queue
         jobs_queue.enqueue(
             'ai_engine.tasks.process_image', 
             task_id, 

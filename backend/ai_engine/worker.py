@@ -1,14 +1,8 @@
-import sys
-import os
-
-current_directory = os.path.dirname(os.path.abspath(__file__))
-parent_directory = os.path.dirname(current_directory)
-sys.path.append(parent_directory)
-print(sys.path)
-
+from src.core.config import config
 from rq import Worker, Queue, Connection
-from app.core.common import jobs_queue_conn
+from pm_common.core.redis_utils import RedisConnection
 
+jobs_queue_conn = RedisConnection.get_jobs_queue_conn()
 listen = ['default']
 
 if __name__ == '__main__':
