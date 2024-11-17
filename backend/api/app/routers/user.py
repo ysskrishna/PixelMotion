@@ -27,7 +27,17 @@ async def get_all_tasks():
         task_status_str = redis_conn.get(task_id)
         if task_status_str:
             task_status = json.loads(task_status_str)
-            tasks.append(TaskStatus(**task_status))
+            task_status = TaskStatus(**task_status).model_dump()
+
+            image_url = task_status.get("image_url")
+            if image_url:
+                task_status["image_url"] = s3_client.get_public_url(image_url)
+            
+            video_url = task_status.get("video_url")
+            if video_url:
+                task_status["video_url"] = s3_client.get_public_url(video_url)
+
+            tasks.append(task_status)
     return tasks
 
 
@@ -51,7 +61,7 @@ def upload_image(file: UploadFile = File(...), title: str = Form(...)):
             extra_args={'ContentType': file.content_type}
         )
         print(f"filepath: {filepath}, title: {title}, content_type: {file.content_type}")
-        create_task_status(task_id, JobStatus.pending.value, title, image_url=filepath)
+        create_task_status(task_id, JobStatus.pending.value, title, message="queued", image_url=filepath)
         
         # Add background task to jobs_queue
         jobs_queue.enqueue(

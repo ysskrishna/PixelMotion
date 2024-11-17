@@ -74,6 +74,7 @@ class ImageToVideoProcessor(BaseTaskProcessor):
     def process(self, file_path: str, **kwargs):
         try:
             print(f"Processing started for task: {self.task_id}, file_path: {file_path}")
+            update_task_status(self.task_id, JobStatus.processing.value, "Starting image processing", 5)
 
             file_ext = file_path.split('.')[-1].lower()
             if file_ext not in self.SUPPORTED_FORMATS:
@@ -83,26 +84,30 @@ class ImageToVideoProcessor(BaseTaskProcessor):
                 image_path = os.path.join(temp_dir, f"image.{file_ext}")
                 self.s3_client.download_file(file_path, image_path)
                 print(f"Image path: {image_path}")
-                
+
+                update_task_status(self.task_id, JobStatus.processing.value, "Selecting animation", 20)
                 output_path = os.path.join(temp_dir, f"{self.task_id}_output.mp4")
                 animation_type = select_weighted_animation()
                 print(f"Selected animation type: {animation_type}")
                 duration = 5  # Duration of the video in seconds
 
-                # Download audio file
+                # Download audio
+                update_task_status(self.task_id, JobStatus.processing.value, "Selecting background music", 30)
                 audio_remote_path = select_music()
                 audio_path = os.path.join(temp_dir, "background_music.mp3")
                 audio_path = self.download_audio(audio_remote_path, audio_path)
                 print(f"Audio path: {audio_path}")
 
+                update_task_status(self.task_id, JobStatus.processing.value, f"Generating video with {animation_type} effect", 40)
                 self.create_animated_video(image_path, output_path, duration, animation_type, audio_path)
 
+                update_task_status(self.task_id, JobStatus.processing.value, "Uploading video", 80)
                 video_url = self.s3_client.upload_file(output_path, f"videos/{self.task_id}_output.mp4", extra_args={'ContentType': 'video/mp4'})
                 print(f"Image processed successfully for task: {self.task_id}, file_path: {file_path}, video_url: {video_url}")
-                update_task_status(self.task_id, JobStatus.success.value, 100, video_url=video_url)
+                update_task_status(self.task_id, JobStatus.success.value, "Video uploaded successfully", 100, video_url=video_url)
 
         except Exception as e:
             print(f"Error processing image for task: {self.task_id}, file_path: {file_path}, error: {e}")
-            update_task_status(self.task_id, JobStatus.failed.value, 0)
+            update_task_status(self.task_id, JobStatus.failed.value, "Failed to process image", 0)
 
 
