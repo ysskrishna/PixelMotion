@@ -8,6 +8,7 @@ import numpy as np
 from moviepy.editor import VideoClip, AudioFileClip
 import tempfile
 import os
+import requests
 
 
 class ImageToVideoProcessor(BaseTaskProcessor):
@@ -17,7 +18,20 @@ class ImageToVideoProcessor(BaseTaskProcessor):
         super().__init__(task_id)
         self.s3_client = S3Client()
 
-    
+    def download_audio(self, audio_remote_path: str, output_path: str) -> str:
+        """Download audio file from URL and save it locally"""
+        try:
+            response = requests.get(audio_remote_path)
+            response.raise_for_status()  # Raise an error for bad status codes
+            
+            with open(output_path, 'wb') as f:
+                f.write(response.content)
+            
+            return output_path
+        except Exception as e:
+            print(f"Error downloading audio file: {e}")
+            return None
+
     def create_animated_video(
         self,
         image_path: str,
@@ -47,7 +61,7 @@ class ImageToVideoProcessor(BaseTaskProcessor):
         video_clip = video_clip.set_fps(fps)
         print(f"Set video clip fps to {fps}")
         
-        if audio_path:
+        if audio_path and os.path.exists(audio_path):
             audio_clip = AudioFileClip(audio_path)
             audio_clip = audio_clip.subclip(0, duration)  # Trim audio to match video duration
             video_clip = video_clip.set_audio(audio_clip)
@@ -73,8 +87,11 @@ class ImageToVideoProcessor(BaseTaskProcessor):
                 animation_type = select_weighted_animation()
                 print(f"Selected animation type: {animation_type}")
                 duration = 5  # Duration of the video in seconds
-                # audio_path = "https://music.wixstatic.com/preview/e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3"
-                audio_path = os.path.join(os.path.dirname(__file__), "e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3")
+
+                # Download audio file
+                audio_remote_path = "https://music.wixstatic.com/preview/e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3"
+                audio_path = os.path.join(temp_dir, "background_music.mp3")
+                audio_path = self.download_audio(audio_remote_path, audio_path)
                 print(f"Audio path: {audio_path}")
 
                 self.create_animated_video(image_path, output_path, duration, animation_type, audio_path)
