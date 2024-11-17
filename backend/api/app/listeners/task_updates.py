@@ -2,7 +2,7 @@ import json
 import asyncio
 from pm_common.core.redis_utils import RedisConnection
 from pm_common.models.enums import OperationType
-from app.core.utils import connected_websockets
+from app.core.utils import connected_websockets, format_task
 
 
 redis_conn = RedisConnection.get_redis_connection()
@@ -33,8 +33,11 @@ def task_updates_listener():
 
                 # Update the redis db
                 redis_conn.set(task_id, json.dumps(task_status_merged))
+                
+                # format the task status
+                task = format_task(task_status_merged)
                 # notify clients
-                asyncio.run(notify_clients(task_status_merged))
+                asyncio.run(notify_clients(task))
             except json.JSONDecodeError as e:
                 print(f"JSON decoding error: {e}")
             except Exception as e:

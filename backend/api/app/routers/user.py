@@ -10,7 +10,7 @@ from pm_common.core.redis_utils import RedisConnection
 from pm_common.core.task_status import create_task_status
 from pm_common.models.enums import JobStatus
 from app.core.config import config
-
+from app.core.utils import format_task
 router = APIRouter()
 
 s3_client = S3Client()
@@ -26,18 +26,8 @@ async def get_all_tasks():
         task_id = task_key.decode("utf-8")
         task_status_str = redis_conn.get(task_id)
         if task_status_str:
-            task_status = json.loads(task_status_str)
-            task_status = TaskStatus(**task_status).model_dump()
-
-            image_url = task_status.get("image_url")
-            if image_url:
-                task_status["image_url"] = s3_client.get_public_url(image_url)
-            
-            video_url = task_status.get("video_url")
-            if video_url:
-                task_status["video_url"] = s3_client.get_public_url(video_url)
-
-            tasks.append(task_status)
+            task = format_task(task_status_str)
+            tasks.append(task)
     return tasks
 
 
