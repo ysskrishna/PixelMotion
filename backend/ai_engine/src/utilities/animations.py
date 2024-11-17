@@ -33,61 +33,72 @@ def apply_animation(frame: Image.Image, params: dict, img_width: int, img_height
    
     return frame
 
-def register_animation(name: str, recommended_fps: int):
+def register_animation(name: str, recommended_fps: int, weight: float = 1.0):
     def decorator(func):
         ANIMATIONS[name] = {
             'function': func,
-            'fps': recommended_fps
+            'fps': recommended_fps,
+            'weight': weight
         }
         return func
     return decorator
 
 
+def select_weighted_animation() -> str:
+    """Select an animation based on weights"""
+    animations = list(ANIMATIONS.items())
+    names, data = zip(*animations)
+    weights = [d['weight'] for d in data]
+    total_weight = sum(weights)
+    normalized_weights = [w/total_weight for w in weights]
+    return random.choices(names, weights=normalized_weights, k=1)[0]
+
+
 # Basic Zoom Animations
-@register_animation(AnimationType.ZOOM_IN.value, 30)
+@register_animation(AnimationType.ZOOM_IN.value, 30, weight=1.0)
 def zoom_in(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.5 * (t / duration)
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.ZOOM_OUT.value, 30)
+@register_animation(AnimationType.ZOOM_OUT.value, 30, weight=1.0)
 def zoom_out(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1.5 - 0.5 * (t / duration)
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.ZOOM_PULSE.value, 60)
+@register_animation(AnimationType.ZOOM_PULSE.value, 60, weight=1.2)
 def zoom_pulse(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.1 * np.sin(2 * np.pi * t * 3)
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.ZOOM_BOUNCE.value, 60)
+@register_animation(AnimationType.ZOOM_BOUNCE.value, 60, weight=1.2)
 def zoom_bounce(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.1 * abs(np.sin(2 * np.pi * t * 2))
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.ZOOM_SHAKE.value, 60)
+@register_animation(AnimationType.ZOOM_SHAKE.value, 60, weight=0.8)
 def zoom_shake(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.05 * random.uniform(-1, 1)
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0}
 
 
 # Pan Animations
-@register_animation(AnimationType.PAN_LEFT.value, 30)
+@register_animation(AnimationType.PAN_LEFT.value, 30, weight=1.0)
 def pan_left(t: float, duration: float, img: Image.Image) -> tuple:
     offset_x = int(img.width * 0.3 * (t / duration))
     return {'scale': 1.3, 'rotation': 0, 'offset_x': offset_x, 'offset_y': 0}
 
 
-@register_animation(AnimationType.PAN_RIGHT.value, 30)
+@register_animation(AnimationType.PAN_RIGHT.value, 30, weight=1.0)
 def pan_right(t: float, duration: float, img: Image.Image) -> tuple:
     offset_x = -int(img.width * 0.3 * (t / duration))
     return {'scale': 1.3, 'rotation': 0, 'offset_x': offset_x, 'offset_y': 0}
 
 
-@register_animation(AnimationType.PAN_CIRCULAR.value, 60)
+@register_animation(AnimationType.PAN_CIRCULAR.value, 60, weight=1.5)
 def pan_circular(t: float, duration: float, img: Image.Image) -> tuple:
     radius = 50
     offset_x = int(radius * np.cos(2 * np.pi * t / duration))
@@ -96,33 +107,33 @@ def pan_circular(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Rotate Animations
-@register_animation(AnimationType.ROTATE_CLOCKWISE.value, 60)
+@register_animation(AnimationType.ROTATE_CLOCKWISE.value, 60, weight=1.2)
 def rotate_clockwise(t: float, duration: float, img: Image.Image) -> tuple:
     rotation = 360 * (t / duration)
     return {'scale': 1.2, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.ROTATE_SWING.value, 60)
+@register_animation(AnimationType.ROTATE_SWING.value, 60, weight=1.3)
 def rotate_swing(t: float, duration: float, img: Image.Image) -> tuple:
     rotation = 20 * np.sin(2 * np.pi * t * 2)
     return {'scale': 1.1, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
 # Complex Movements
-@register_animation(AnimationType.SPIRAL_IN.value, 60)
+@register_animation(AnimationType.SPIRAL_IN.value, 60, weight=1.8)
 def spiral_in(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + (1 - t/duration)
     rotation = 360 * (t / duration)
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.WAVE.value, 60)
+@register_animation(AnimationType.WAVE.value, 60, weight=1.4)
 def wave(t: float, duration: float, img: Image.Image) -> tuple:
     offset_y = int(30 * np.sin(2 * np.pi * t * 3))
     return {'scale': 1.1, 'rotation': 0, 'offset_x': 0, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.ELASTIC.value, 60)
+@register_animation(AnimationType.ELASTIC.value, 60, weight=1.3)
 def elastic(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1 + 0.2 * (np.exp(-progress * 5) * np.cos(progress * 20))
@@ -130,14 +141,14 @@ def elastic(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Combination Animations
-@register_animation(AnimationType.ZOOM_ROTATE.value, 60)
+@register_animation(AnimationType.ZOOM_ROTATE.value, 60, weight=1.6)
 def zoom_rotate(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.3 * (t / duration)
     rotation = 180 * (t / duration)
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.PAN_ZOOM.value, 60)
+@register_animation(AnimationType.PAN_ZOOM.value, 60, weight=1.5)
 def pan_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     scale = 1 + 0.2 * np.sin(2 * np.pi * t * 2)
     offset_x = int(30 * np.cos(2 * np.pi * t * 3))
@@ -145,7 +156,7 @@ def pan_zoom(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Advanced Combination Animations
-@register_animation(AnimationType.SPIRAL_ZOOM.value, 60)
+@register_animation(AnimationType.SPIRAL_ZOOM.value, 60, weight=2.0)
 def spiral_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1 + 0.3 * np.sin(2 * np.pi * progress * 2)
@@ -155,7 +166,7 @@ def spiral_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.WAVE_ROTATE.value, 60)
+@register_animation(AnimationType.WAVE_ROTATE.value, 60, weight=1.7)
 def wave_rotate(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     rotation = 30 * np.sin(2 * np.pi * progress * 2)
@@ -164,7 +175,7 @@ def wave_rotate(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.PULSE_PAN.value, 60)
+@register_animation(AnimationType.PULSE_PAN.value, 60, weight=1.5)
 def pulse_pan(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1.1 + 0.1 * np.sin(2 * np.pi * progress * 3)
@@ -172,7 +183,7 @@ def pulse_pan(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': 0}
 
 
-@register_animation(AnimationType.BOUNCE_PAN.value, 60)
+@register_animation(AnimationType.BOUNCE_PAN.value, 60, weight=1.6)
 def bounce_pan(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1.2 + 0.1 * abs(np.sin(2 * np.pi * progress * 2))
@@ -181,7 +192,7 @@ def bounce_pan(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.SHAKE_ROTATE.value, 60)
+@register_animation(AnimationType.SHAKE_ROTATE.value, 60, weight=1.4)
 def shake_rotate(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     rotation = 10 * random.uniform(-1, 1)
@@ -192,7 +203,7 @@ def shake_rotate(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Cinematic Effects
-@register_animation(AnimationType.KEN_BURNS.value, 30)
+@register_animation(AnimationType.KEN_BURNS.value, 30, weight=2.5)
 def ken_burns(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1.1 + 0.15 * progress
@@ -201,7 +212,7 @@ def ken_burns(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.DRAMATIC_ZOOM.value, 30)
+@register_animation(AnimationType.DRAMATIC_ZOOM.value, 30, weight=2.2)
 def dramatic_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1 + (0.5 * progress ** 2)  # Accelerating zoom
@@ -209,7 +220,7 @@ def dramatic_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.SMOOTH_DRIFT.value, 60)
+@register_animation(AnimationType.SMOOTH_DRIFT.value, 60, weight=2.0)
 def smooth_drift(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     scale = 1.15
@@ -220,7 +231,7 @@ def smooth_drift(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Advanced Effects
-@register_animation(AnimationType.GLITCH.value, 60)
+@register_animation(AnimationType.GLITCH.value, 60, weight=1.0)
 def glitch(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Random glitch effects every 0.1 seconds
@@ -234,7 +245,7 @@ def glitch(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.MATRIX_ZOOM.value, 60)
+@register_animation(AnimationType.MATRIX_ZOOM.value, 60, weight=1.8)
 def matrix_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Combines digital-looking zoom with occasional "jumps"
@@ -243,7 +254,7 @@ def matrix_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': 0}
 
 
-@register_animation(AnimationType.DOLLY_ZOOM.value, 60)
+@register_animation(AnimationType.DOLLY_ZOOM.value, 60, weight=2.0)
 def dolly_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Simulates the vertigo effect with opposing zoom and scale
@@ -253,7 +264,7 @@ def dolly_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.WHIRLPOOL.value, 60)
+@register_animation(AnimationType.WHIRLPOOL.value, 60, weight=1.9)
 def whirlpool(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Creates a spiraling whirlpool effect
@@ -265,7 +276,7 @@ def whirlpool(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.EARTHQUAKE.value, 60)
+@register_animation(AnimationType.EARTHQUAKE.value, 60, weight=1.2)
 def earthquake(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Violent shaking with increasing intensity
@@ -276,7 +287,7 @@ def earthquake(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.2, 'rotation': rotation, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.KALEIDOSCOPE.value, 60)
+@register_animation(AnimationType.KALEIDOSCOPE.value, 60, weight=1.7)
 def kaleidoscope(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Rotating kaleidoscope effect
@@ -288,7 +299,7 @@ def kaleidoscope(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Cinematic Pro Effects
-@register_animation(AnimationType.VERTIGO.value, 60)
+@register_animation(AnimationType.VERTIGO.value, 60, weight=2.3)
 def vertigo(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Classic Hitchcock vertigo effect
@@ -297,7 +308,7 @@ def vertigo(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0}
 
 
-@register_animation(AnimationType.PARALLAX.value, 60)
+@register_animation(AnimationType.PARALLAX.value, 60, weight=2.1)
 def parallax(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Simulates parallax scrolling effect
@@ -307,7 +318,7 @@ def parallax(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': offset_x, 'offset_y': offset_y}
 
 
-@register_animation(AnimationType.DRONE_FLYBY.value, 60)
+@register_animation(AnimationType.DRONE_FLYBY.value, 60, weight=2.2)
 def drone_flyby(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Simulates a drone flying past the subject
@@ -319,7 +330,7 @@ def drone_flyby(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Visual Effects
-@register_animation(AnimationType.BLUR_ZOOM.value, 60)
+@register_animation(AnimationType.BLUR_ZOOM.value, 60, weight=1.6)
 def blur_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Increasing blur radius with zoom
@@ -329,7 +340,7 @@ def blur_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.FADE_PULSE.value, 60)
+@register_animation(AnimationType.FADE_PULSE.value, 60, weight=1.4)
 def fade_pulse(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Pulsing transparency effect
@@ -339,7 +350,7 @@ def fade_pulse(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.1, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.TILT_SHIFT.value, 60)
+@register_animation(AnimationType.TILT_SHIFT.value, 60, weight=1.8)
 def tilt_shift(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Simulated tilt-shift effect with selective blur
@@ -357,7 +368,7 @@ def tilt_shift(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.1, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.DREAM_SEQUENCE.value, 60)
+@register_animation(AnimationType.DREAM_SEQUENCE.value, 60, weight=2.0)
 def dream_sequence(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Dreamy effect with blur and color enhancement
@@ -370,7 +381,7 @@ def dream_sequence(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': rotation, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.COLOR_PULSE.value, 60)
+@register_animation(AnimationType.COLOR_PULSE.value, 60, weight=1.5)
 def color_pulse(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Pulsing color saturation
@@ -380,7 +391,7 @@ def color_pulse(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.0, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.VIGNETTE_ZOOM.value, 60)
+@register_animation(AnimationType.VIGNETTE_ZOOM.value, 60, weight=1.7)
 def vignette_zoom(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Dynamic vignette effect with zoom
@@ -397,7 +408,7 @@ def vignette_zoom(t: float, duration: float, img: Image.Image) -> tuple:
 
 
 # Artistic Effects
-@register_animation(AnimationType.WATERCOLOR.value, 60)
+@register_animation(AnimationType.WATERCOLOR.value, 60, weight=1.9)
 def watercolor(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Watercolor painting effect
@@ -408,7 +419,7 @@ def watercolor(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': scale, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.PIXELATE.value, 60)
+@register_animation(AnimationType.PIXELATE.value, 60, weight=1.3)
 def pixelate(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Dynamic pixelation effect
@@ -419,7 +430,7 @@ def pixelate(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.0, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.DOUBLE_EXPOSURE.value, 60)
+@register_animation(AnimationType.DOUBLE_EXPOSURE.value, 60, weight=1.8)
 def double_exposure(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Double exposure effect with offset ghost image
@@ -431,7 +442,7 @@ def double_exposure(t: float, duration: float, img: Image.Image) -> tuple:
     return {'scale': 1.1, 'rotation': 0, 'offset_x': 0, 'offset_y': 0, 'image': img}
 
 
-@register_animation(AnimationType.RETRO_WAVE.value, 60)
+@register_animation(AnimationType.RETRO_WAVE.value, 60, weight=1.6)
 def retro_wave(t: float, duration: float, img: Image.Image) -> tuple:
     progress = t / duration
     # Retro wave aesthetic with color manipulation and scan lines

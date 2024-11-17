@@ -2,10 +2,9 @@ from src.core.task_processor import BaseTaskProcessor
 from pm_common.models.enums import JobStatus
 from pm_common.core.task_status import update_task_status
 from pm_common.core.s3 import S3Client
-from src.utilities.animations import apply_animation, ANIMATIONS
+from src.utilities.animations import apply_animation, ANIMATIONS, select_weighted_animation
 from PIL import Image
 import numpy as np
-import random
 from moviepy.editor import VideoClip, AudioFileClip
 import tempfile
 import os
@@ -71,7 +70,8 @@ class ImageToVideoProcessor(BaseTaskProcessor):
                 print(f"Image path: {image_path}")
                 
                 output_path = os.path.join(temp_dir, f"{self.task_id}_output.mp4")
-                animation_type = random.choice(list(ANIMATIONS.keys()))
+                animation_type = select_weighted_animation()
+                print(f"Selected animation type: {animation_type}")
                 duration = 5  # Duration of the video in seconds
                 # audio_path = "https://music.wixstatic.com/preview/e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3"
                 audio_path = os.path.join(os.path.dirname(__file__), "e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3")
