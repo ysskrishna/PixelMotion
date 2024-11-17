@@ -3,6 +3,7 @@ from pm_common.models.enums import JobStatus
 from pm_common.core.task_status import update_task_status
 from pm_common.core.s3 import S3Client
 from src.utilities.animations import apply_animation, ANIMATIONS, select_weighted_animation
+from src.utilities.music import select_music
 from PIL import Image
 import numpy as np
 from moviepy.editor import VideoClip, AudioFileClip
@@ -89,7 +90,7 @@ class ImageToVideoProcessor(BaseTaskProcessor):
                 duration = 5  # Duration of the video in seconds
 
                 # Download audio file
-                audio_remote_path = "https://music.wixstatic.com/preview/e102c1_916abfabecba4855a7b15e634d74ff18-128.mp3"
+                audio_remote_path = select_music()
                 audio_path = os.path.join(temp_dir, "background_music.mp3")
                 audio_path = self.download_audio(audio_remote_path, audio_path)
                 print(f"Audio path: {audio_path}")
