@@ -10,6 +10,7 @@ import Logo from './assets/logo.png';
 const App = () => {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState(null); // New state for message
   const [tasks, setTasks] = useState([]);
   
   useEffect(() => {
@@ -44,6 +45,7 @@ const App = () => {
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
+    setUploadMessage(null);
   };
 
   const handleUpload = async () => {
@@ -51,6 +53,7 @@ const App = () => {
 
     try {
       setUploading(true);
+      setUploadMessage(null);
 
       const formData = new FormData();
       formData.append('file', file);
@@ -65,9 +68,12 @@ const App = () => {
 
       const task_id = response.data.task_id;
       console.log(`Upload successful, Task ID: ${task_id}`);
+      setUploadMessage('Upload successful!'); // Set success message
+      setFile(null);
 
     } catch (error) {
       console.error('Error uploading file: ', error);
+      setUploadMessage('Upload failed. Please try again.'); // Set error message
     } finally {
       setUploading(false);
     }
@@ -90,9 +96,22 @@ const App = () => {
           className="w-[100%] disabled:opacity-50 disabled:cursor-not-allowed my-2 cursor-pointer relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
         >
           <span className="w-[100%] relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
-            Generate Video
+            {uploading ? (
+              <div className="flex items-center justify-center">
+                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Uploading...
+              </div>
+            ) : 'Generate Video'}
           </span>
         </button>
+        {uploadMessage && (
+          <div className={`mt-2 text-sm ${uploadMessage.includes('successful') ? 'text-green-600' : 'text-red-600'}`}>
+            {uploadMessage}
+          </div>
+        )}
       </div> 
       
       <Table data={tasks} />
