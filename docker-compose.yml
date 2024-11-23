@@ -30,9 +30,6 @@ services:
     depends_on:
       - redis
       - storage
-    links:
-      - redis
-      - storage
   
   worker:
     build:
@@ -43,15 +40,14 @@ services:
     depends_on:
       - backend
       - redis
-    links:
-      - redis
-      - storage
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #   ports:
-  #     - "5173:5173"
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
 
   redis:
     image: "redis:latest"
