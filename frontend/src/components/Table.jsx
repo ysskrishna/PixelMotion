@@ -94,7 +94,14 @@ function Table({data}) {
                                 {item?.status}
                             </td>
                             <td className="px-6 py-3">
-                                {item?.progress}%
+                                <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                                    <div 
+                                        className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
+                                        style={{ width: `${item?.progress || 0}%` }}
+                                    >
+                                    </div>
+                                </div>
+                                <span className="text-xs mt-1 block">{item?.progress || 0}%</span>
                             </td>
                             <td className="px-6 py-3">
                                 {item?.status === 'success' && (
