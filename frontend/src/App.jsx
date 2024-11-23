@@ -74,17 +74,21 @@ const App = () => {
 
   return (
     <div className="max-w-6xl mx-auto p-6 my-2">
-      <section class="bg-white dark:bg-gray-900">
-        <div class="px-4 mx-auto max-w-screen-xl text-center justify-center items-center">
+      <section className="bg-white dark:bg-gray-900">
+        <div className="px-4 mx-auto max-w-screen-xl text-center justify-center items-center">
           <img src={Logo} alt="PixelMotion" className="h-10 md:h-12  mx-auto" />  
-          <p class="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks. Start creating your video now and share your story with the world.</p>
+          <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks. Start creating your video now and share your story with the world.</p>
         </div>
       </section>
 
-      <div class="flex flex-col items-center justify-center w-full">
+      <div className="flex flex-col items-center justify-center w-full">
         <Upload file={file} handleFileChange={handleFileChange} />
-        <button onClick={handleUpload} disabled={!file || uploading} class="w-[100%] disabled:opacity-50 disabled:cursor-not-allowed my-2 cursor-pointer relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800">
-          <span class="w-[100%] relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
+        <button 
+          onClick={handleUpload} 
+          disabled={!file || uploading} 
+          className="w-[100%] disabled:opacity-50 disabled:cursor-not-allowed my-2 cursor-pointer relative inline-flex items-center justify-center p-0.5 mb-2 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-cyan-500 to-blue-500 group-hover:from-cyan-500 group-hover:to-blue-500 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-cyan-200 dark:focus:ring-cyan-800"
+        >
+          <span className="w-[100%] relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-opacity-0">
             Generate Video
           </span>
         </button>
