@@ -18,6 +18,34 @@ function Table({data}) {
     if (!isValidData(sortedData)) {
         return <></>
     }
+
+    const handleDownload = async (videoUrl) => {
+        try {
+            const fileName = `video_${Date.now()}.mp4`;
+
+            const response = await fetch(videoUrl);
+            if (!response.ok) {
+                throw new Error('Failed to download video');
+            }
+
+            const blob = await response.blob();
+            const objectUrl = URL.createObjectURL(blob);
+
+
+            const link = document.createElement('a');
+            link.href = objectUrl;
+            link.download = fileName;
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            URL.revokeObjectURL(objectUrl);
+        } catch (error) {
+            console.error('Error downloading video:', error);
+        }
+    };
+    
   return (
     <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
         <table className="table-auto w-full text-sm text-left rtl:text-right text-gray-500">
@@ -71,14 +99,7 @@ function Table({data}) {
                             <td className="px-6 py-3">
                                 {item?.status === 'success' && (
                                     <button
-                                        onClick={() => {
-                                            const link = document.createElement('a');
-                                            link.href = `${item?.video_url}`;
-                                            link.download = `video_${Date.now()}.mp4`;
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            document.body.removeChild(link);
-                                        }}
+                                        onClick={() => handleDownload(item?.video_url)}
                                         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                     >
                                         Download Video
