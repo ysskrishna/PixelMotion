@@ -55,7 +55,10 @@ function Table({data}) {
                         Title
                     </th>
                     <th scope="col" className="px-6 py-3">
-                        Image URL
+                        Image
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Progress
                     </th>
                     <th scope="col" className="px-6 py-3">
                         Status Message
@@ -63,12 +66,7 @@ function Table({data}) {
                     <th scope="col" className="px-6 py-3">
                         Uploaded At
                     </th>
-                    <th scope="col" className="px-6 py-3">
-                        Status
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                        Progress
-                    </th>
+
                     <th scope="col" className="px-6 py-3">
                         Action
                     </th>
@@ -81,19 +79,19 @@ function Table({data}) {
                             <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                                 {item?.title}
                             </th>
-                            <td className="px-6 py-3 whitespace-wrap">
-                                {item?.image_url}
+                            <td className="px-6 py-3">
+                                {item?.image_url && (
+                                    <img 
+                                        src={item.image_url} 
+                                        alt={item.title || 'Preview'} 
+                                        className="object-contain w-full max-w-[200px] max-h-[150px]"
+                                    />
+                                )}
                             </td>
                             <td className="px-6 py-3">
-                                {item?.message}
-                            </td>
-                            <td className="px-6 py-3">
-                                {getRelativeTime(item?.created_at)}
-                            </td>
-                            <td className="px-6 py-3">
-                                {item?.status}
-                            </td>
-                            <td className="px-6 py-3">
+                                <span className="block mb-1 text-sm font-medium">
+                                    {item?.status}
+                                </span>
                                 <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
                                     <div 
                                         className="bg-blue-600 h-2.5 rounded-full transition-all duration-300" 
@@ -103,6 +101,13 @@ function Table({data}) {
                                 </div>
                                 <span className="text-xs mt-1 block">{item?.progress || 0}%</span>
                             </td>
+                            <td className="px-6 py-3">
+                                {item?.message}
+                            </td>
+                            <td className="px-6 py-3">
+                                {getRelativeTime(item?.created_at)}
+                            </td>
+
                             <td className="px-6 py-3">
                                 {item?.status === 'success' && (
                                     <button
