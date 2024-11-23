@@ -34,9 +34,8 @@ def task_updates_listener():
                 # Update the redis db
                 redis_conn.set(task_id, json.dumps(task_status_merged))
                 
-                # format the task status
-                task = format_task(task_status_merged)
-                # notify clients
+                # Notify clients
+                task = format_task(json.dumps(task_status_merged))
                 asyncio.run(notify_clients(task))
             except json.JSONDecodeError as e:
                 print(f"JSON decoding error: {e}")

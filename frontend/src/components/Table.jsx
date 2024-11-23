@@ -1,13 +1,21 @@
 import React from 'react'
-import config from '../config';
+import moment from 'moment';
 
 function isValidData(data) {
     return Array.isArray(data) && data.length > 0;
 }
 
-function Table({data}) {
+function getRelativeTime(isoDate) {
+    return moment(isoDate).fromNow();
+}
 
-    if (!isValidData(data)) {
+function Table({data}) {
+    // Sort data by created_at in descending order
+    const sortedData = [...data].sort((a, b) => 
+        new Date(b.created_at) - new Date(a.created_at)
+    );
+
+    if (!isValidData(sortedData)) {
         return <></>
     }
   return (
@@ -15,11 +23,17 @@ function Table({data}) {
         <table className="table-auto w-full text-sm text-left rtl:text-right text-gray-500">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50">
                 <tr>
-                    {/* <th scope="col" className="px-6 py-3">
-                        Task ID
-                    </th> */}
+                    <th scope="col" className="px-6 py-3">
+                        Title
+                    </th>
                     <th scope="col" className="px-6 py-3">
                         Image URL
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Status Message
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                        Uploaded At
                     </th>
                     <th scope="col" className="px-6 py-3">
                         Status
@@ -34,13 +48,19 @@ function Table({data}) {
             </thead>
             <tbody>
                 {
-                    data.map(item => (
-                        <tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
-                            {/* <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {item?.task_id}
-                            </th> */}
+                    sortedData.map((item, index) => (
+                        <tr key={index} className="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+                            <th scope="row" className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                {item?.title}
+                            </th>
                             <td className="px-6 py-3 whitespace-wrap">
-                                {config?.baseUrl}/{item?.image_url}
+                                {item?.image_url}
+                            </td>
+                            <td className="px-6 py-3">
+                                {item?.message}
+                            </td>
+                            <td className="px-6 py-3">
+                                {getRelativeTime(item?.created_at)}
                             </td>
                             <td className="px-6 py-3">
                                 {item?.status}
@@ -50,7 +70,19 @@ function Table({data}) {
                             </td>
                             <td className="px-6 py-3">
                                 {item?.status === 'success' && (
-                                <a href={`${item?.video_url}`} target="_blank" rel="noopener noreferrer" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">View Video</a>
+                                    <button
+                                        onClick={() => {
+                                            const link = document.createElement('a');
+                                            link.href = `${item?.video_url}`;
+                                            link.download = `video_${Date.now()}.mp4`;
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                        }}
+                                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                                    >
+                                        Download Video
+                                    </button>
                                 )}
                             </td>
                         </tr>

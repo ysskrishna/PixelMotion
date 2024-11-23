@@ -54,7 +54,8 @@ const App = () => {
 
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('title', "title");
+      const title = file.name.split('.').slice(0, -1).join('.') || "title";
+      formData.append('title', title);
 
       const response = await axios.post(`${config?.baseUrl}/user/upload`, formData, {
         headers: {
@@ -73,11 +74,11 @@ const App = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-6 my-2">
+    <div className="max-w-7xl mx-auto p-6 my-2">
       <section className="bg-white dark:bg-gray-900">
         <div className="px-4 mx-auto max-w-screen-xl text-center justify-center items-center">
           <img src={Logo} alt="PixelMotion" className="h-10 md:h-12  mx-auto" />  
-          <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks. Start creating your video now and share your story with the world.</p>
+          <p className="mb-8 text-lg font-normal text-gray-500 lg:text-xl sm:px-16 lg:px-16">Transform your images into stunning  videos in just a few clicks.</p>
         </div>
       </section>
 
