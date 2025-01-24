@@ -2,6 +2,7 @@
 A full-stack application built using React, TailwindCSS, FastAPI, Redis, Redis Queue, Docker, and WebSockets. It allows users to generate videos from images with a single click while providing real-time progress updates during the video generation process. The generated videos include animations and background music.
 
 
+Check out sample generated videos in the [media/samples](./media/samples) folder.
 
 ## Media
 
@@ -27,9 +28,6 @@ A full-stack application built using React, TailwindCSS, FastAPI, Redis, Redis Q
 
 ### Multiple Images Processing
 <img src="./media/pixelmotion-6-multiple-upload.JPG" alt="Multiple Upload"/>
-
-
-Check out sample generated videos in the [media/samples](./media/samples) folder.
 
 
 
