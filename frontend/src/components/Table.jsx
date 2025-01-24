@@ -6,8 +6,9 @@ function isValidData(data) {
 }
 
 function getRelativeTime(isoDate) {
-    return moment(isoDate).fromNow();
+    return moment.utc(isoDate).local().fromNow();
 }
+
 function Table({data}) {
     // Sort data by created_at in descending order
     const sortedData = [...data].sort((a, b) => 
