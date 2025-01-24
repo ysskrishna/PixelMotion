@@ -105,3 +105,9 @@ This diagram illustrates the workflow of the image to video generation process
    - Username: `minioadmin`
    - Password: `minioadminpassword`
 8. Redis will be available at `http://localhost:6379/`
+
+
+## License
+Copyright (c) 2024 Y. Siva Sai Krishna
+
+This project is licensed under the AGPL-3.0 License - see the LICENSE file for details.
