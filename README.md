@@ -6,6 +6,10 @@ Check out sample generated videos in the [media/samples](./media/samples) folder
 
 ## Media
 
+
+https://github.com/user-attachments/assets/2e3887e4-2f59-4cb3-97ad-1dd0d65cb20c
+
+
 <video width="320" height="240" controls>
   <source src="./media/pixelmotion_demo.mp4" type="video/mp4">
 </video>
