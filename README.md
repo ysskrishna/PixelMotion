@@ -35,9 +35,9 @@ https://github.com/user-attachments/assets/2e3887e4-2f59-4cb3-97ad-1dd0d65cb20c
 
 
 
-## Pipeline Diagram
-This diagram illustrates the workflow of the image to video generation process
-<img src="./media/image-video-pipeline.JPG" alt="Video pipeline"/>
+## Architecture Diagram
+
+<img src="./media/pixelmotion-architecture.PNG" alt="PixelMotion Architecture"/>
 
 ## Features
 - Generate videos from images with a single click
