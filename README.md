@@ -108,6 +108,6 @@ https://github.com/user-attachments/assets/2e3887e4-2f59-4cb3-97ad-1dd0d65cb20c
 
 
 ## License
-Copyright (c) 2024 Y. Siva Sai Krishna
+Copyright (c) 2024 [Y. Siva Sai Krishna](https://github.com/ysskrishna)
 
 This project is licensed under the AGPL-3.0 License - see the LICENSE file for details.
