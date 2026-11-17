@@ -1,2 +1,8 @@
 notes.md
 assessment.md
+
+# Local secret files. Example files stay tracked.
+backend/ai_engine/.env
+backend/ai_engine/.env.production
+backend/api/.env
+backend/api/.env.production
