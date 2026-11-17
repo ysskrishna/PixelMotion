@@ -1,4 +1,7 @@
 # PixelMotion - Image to video generation tool
+
+[![License: AGPL-3.0](https://img.shields.io/github/license/ysskrishna/PixelMotion)](https://github.com/ysskrishna/PixelMotion/blob/main/LICENSE) [![Author site](https://img.shields.io/badge/author-ysskrishna.space-informational)](https://ysskrishna.space)
+
 A full-stack application built using React, TailwindCSS, FastAPI, Redis, Redis Queue, Docker, and WebSockets. It allows users to generate videos from images with a single click while providing real-time progress updates during the video generation process. The generated videos include animations and background music.
 
 
@@ -32,7 +35,6 @@ https://github.com/user-attachments/assets/2e3887e4-2f59-4cb3-97ad-1dd0d65cb20c
 
 ### Multiple Images Processing
 <img src="./media/pixelmotion-6-multiple-upload.JPG" alt="Multiple Upload"/>
-
 
 
 ## Architecture Diagram
@@ -106,8 +108,32 @@ https://github.com/user-attachments/assets/2e3887e4-2f59-4cb3-97ad-1dd0d65cb20c
    - Password: `minioadminpassword`
 8. Redis will be available at `http://localhost:6379/`
 
+## Built and maintained by
+
+PixelMotion - Image to video generation tool is built and maintained by:
+
+| | Name | GitHub | Role |
+|---|------|--------|------|
+| <img src="https://github.com/ysskrishna.png?size=120" width="60" height="60" alt="Y. Siva Sai Krishna"> | **Y. Siva Sai Krishna** | [@ysskrishna](https://github.com/ysskrishna) | Creator |
+
+## Support
+
+If you find this project helpful:
+
+- ⭐ Star the repository
+- 🐛 [Report issues](https://github.com/ysskrishna/PixelMotion/issues)
+- 🔀 Submit pull requests
+- 💝 [Sponsor on GitHub](https://github.com/sponsors/ysskrishna)
 
 ## License
-Copyright (c) 2024 [Y. Siva Sai Krishna](https://github.com/ysskrishna)
 
-This project is licensed under the AGPL-3.0 License - see the LICENSE file for details.
+AGPL-3.0 © [Y. Siva Sai Krishna](https://github.com/ysskrishna) — see [LICENSE](LICENSE) for details.
+
+---
+
+<p align="left">
+  <a href="https://github.com/ysskrishna">Author's GitHub</a> •
+  <a href="https://linkedin.com/in/ysskrishna">Author's LinkedIn</a> •
+  <a href="https://ysskrishna.space">Author's site</a> •
+  <a href="https://github.com/ysskrishna/PixelMotion/issues">Report Issues</a>
+</p>
